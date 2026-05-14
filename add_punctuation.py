@@ -7,17 +7,35 @@ output_file = "C:/Users/MBC/Documents/testwhisper/punctuated_english.srt"
 MODEL_NAME = "gemma2:9b"
 
 def restore_punctuation(target_chunk, context_before="", context_after=""):
-    # AI의 역할을 '단순 추가'에서 '제거 및 교정'으로 확장한 강력한 프롬프트
-    prompt = """You are an expert Punctuation Correction AI.
-Your ONLY task is to FIX the punctuation in the [TARGET SRT] based on logical sentence flow.
+    prompt = """You are an Expert ASR (Automatic Speech Recognition) Post-Editor.
+The [TARGET SRT] contains raw, damaged speech-to-text output. Your task is to RESTORE logical sentence boundaries by fixing capitalization and punctuation.
 
 RULES:
-1. REMOVE incorrect punctuation: If a punctuation mark (., ?, !) breaks a logically continuous sentence in the middle, REMOVE IT.
-2. ADD missing punctuation: Add the correct punctuation mark at the true logical end of a complete sentence.
-3. DO NOT change, add, or remove any actual words. Only modify punctuation.
-4. DO NOT change Index numbers or Timestamps. Keep them EXACTLY as they are.
-5. Use [PREVIOUS CONTEXT] and [NEXT CONTEXT] only to understand the flow.
-6. Output MUST be in the exact original SRT format. No markdown, no extra notes.
+1. CAPITALIZE NEW SENTENCES: Capitalize the first letter ONLY when a logically new sentence begins, or for true proper nouns.
+2. CONTINUATIONS REMAIN LOWERCASE (CRITICAL): If a subtitle block simply continues an ongoing sentence from the previous block (e.g., an adjective followed by a noun in the next block), DO NOT capitalize the first word of the new block.
+3. ADD PUNCTUATION: Add a period (.), question mark (?), or exclamation mark (!) ONLY at the true logical end of a complete sentence.
+4. REMOVE ERRORS: If a punctuation mark breaks a logically continuous sentence in the middle, remove it.
+5. PRESERVE WORDS & FORMAT: DO NOT change actual spoken words. DO NOT change Index numbers or Timestamps. Keep them EXACTLY as they are.
+
+[EXAMPLE OF CORRECTION]
+Original:
+50
+00:02:26,860 --> 00:02:30,900
+with that logic working, we will then implement a proper character visual with the included
+
+51
+00:02:30,900 --> 00:02:31,900
+assets.
+
+Corrected Output:
+50
+00:02:26,860 --> 00:02:30,900
+With that logic working, we will then implement a proper character visual with the included
+
+51
+00:02:30,900 --> 00:02:31,900
+assets.
+[END OF EXAMPLE]
 """
 
     if context_before:
@@ -25,7 +43,7 @@ RULES:
     if context_after:
         prompt += f"\n[NEXT CONTEXT]\n{context_after}\n"
 
-    prompt += f"\n[TARGET SRT TO PUNCTUATE]\n{target_chunk}\n\n[OUTPUT THE PUNCTUATED SRT ONLY]\n"
+    prompt += f"\n[TARGET SRT TO CORRECT]\n{target_chunk}\n\n[OUTPUT THE CORRECTED SRT ONLY]\n"
     
     try:
         response = ollama.chat(model=MODEL_NAME, messages=[
@@ -42,8 +60,8 @@ with open(input_file, "r", encoding="utf-8") as f:
     content = f.read().strip()
 
 blocks = content.split('\n\n')
-chunk_size = 15      
-context_window = 3   
+chunk_size = 5      
+context_window = 2   
 
 print(f"총 {len(blocks)}개의 자막에 대해 '문장 부호 복원(Punctuation Restoration)'을 시작합니다...")
 

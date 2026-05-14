@@ -15,7 +15,7 @@ model_size = "large-v3"
 model = WhisperModel(model_size, device="cuda", compute_type="float16")
 
 # 2. 오디오 파일 경로 지정 (본인의 파일 경로로 반드시 수정하세요)
-audio_path = "C:/Users/MBC/Documents/testwhisper/part_005.m4a"
+audio_path = "C:/Users/MBC/Documents/testwhisper/part_000.m4a"
 
 # 3. 텍스트화 실행 (무음 구간 건너뛰기 적용)
 segments, info = model.transcribe(
@@ -29,7 +29,7 @@ segments, info = model.transcribe(
 print(f"설정된 언어: {info.language} (확률: {info.language_probability:.2f})")
 
 # 4. 결과물 저장 경로 지정 (본인의 파일 경로로 반드시 수정하세요)
-output_path = "C:/Users/MBC/Documents/testwhisper/subtitle.srt"
+output_path = "C:/Users/MBC/Documents/testwhisper/part_000.srt"
 
 # 5. 파일 쓰기 작업
 with open(output_path, "w", encoding="utf-8") as f:
