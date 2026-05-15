@@ -45,7 +45,7 @@ with open(input_file, "r", encoding="utf-8") as f:
 blocks = content.split('\n\n')
 
 # 참고할 앞뒤 자막의 개수 (너무 많으면 AI가 헷갈리므로 앞뒤 2~3개가 적당합니다)
-context_window = 2 
+context_window = 1 
 
 print(f"총 {len(blocks)}개의 자막에 대해 '1대1 완벽 싱크 번역(앞뒤 맥락 참고)'을 시작합니다...")
 
