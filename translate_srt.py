@@ -5,19 +5,21 @@ input_file = "C:/Users/MBC/Documents/testwhisper/final_subtitle.srt"
 output_file = "C:/Users/MBC/Documents/testwhisper/korean_subtitle_sync.srt"
 
 MODEL_NAME = "gemma2:9b"
-TEMPERATURE = 0.3
-CONTEXT_WINDOW = 3  # 앞뒤 맥락을 참고할 블록 수
+TEMPERATURE = 0
+CONTEXT_WINDOW = 15  # 앞뒤 맥락을 참고할 블록 수
 
 
 # 2. 단일 블록 번역 함수 (앞뒤 맥락을 참고용으로만 사용)
 def translate_single_block(target_block, context_before, context_after):
-    prompt = """You are an expert English-to-Korean subtitle translator.
-Your task is to translate ONLY the [TARGET TEXT] into natural Korean.
+    prompt = """You are an expert English-to-Korean technical translator specializing in Unity game development and C# programming.
+Your task is to translate ONLY the [TARGET TEXT] into natural Korean for Korean game developers.
 Use the [PREVIOUS CONTEXT] and [NEXT CONTEXT] only to understand the situation and tone.
 
-RULES:
-1. Translate ONLY the text inside the [TARGET TEXT]. Do NOT translate the context.
-2. NO EXTRA TEXT: Output ONLY the translated text. No markdown, no notes, no timestamps.
+CRITICAL RULES:
+1. Translate ONLY the text inside the [TARGET TEXT].
+2. NO EXTRA TEXT: Output ONLY the translated text. No markdown, no notes, no explanations, just the translation.
+3. TECHNICAL TERMS: DO NOT translate Unity specific terms, UI elements, or C# keywords. Leave them in English. (e.g., NEVER translate "Cinemachine" to "영화 기계")
+5. FALLBACK TO ENGLISH: If a phrase, idiom, or highly technical explanation cannot be translated into natural Korean without losing its exact technical meaning or causing confusion, leave that specific part or the entire block in English.
 """
     # 앞쪽 맥락이 있을 경우 추가
     if context_before:
